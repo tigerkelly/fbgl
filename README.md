@@ -7,7 +7,7 @@ Basic shapes like circle, box, text and line.
 
 This uses the freetype font library.
 
-	sudo apt install -y libfreetype-dev
+	sudo apt install -y libfreetype-dev libpng-dev
 
 Also uses my utils library.
 
