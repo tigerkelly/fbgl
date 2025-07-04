@@ -2,6 +2,7 @@
 #include <fcntl.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdint.h>
 #include <unistd.h>
 #include <stdbool.h>
 #include <string.h>
@@ -9,6 +10,7 @@
 #include <pthread.h>
 #include <sys/ioctl.h>
 #include <linux/fb.h>
+#include <linux/kd.h>
 #include <sys/mman.h>
 
 #include "ini.h"
@@ -17,55 +19,56 @@
 
 #define _POSIX_C_SOURCE	200809L
 
+/* This is for either 16 or 32 bit color depth.
+ * Use the fbset command to change bits per pixel of the console.
+ *    fbset -g 1024 1600 1024 600 16
+ *    or
+ *    fbset -g 1024 1600 1024 600 32
+ *		Current monitor is a WaveShare 7inch 1024x600 (H) display.
+ * If the above does not work then you may need to disable vc4-kms-v3d in the
+ *		#dtoverlay=vc4-kms-v3d
+ * /boot/firmware/config.txt file or /boot/config.txt file.
+ * With the Waveshare display I also had to set the following in the config.txt file.
+ *      hdmi_group=2
+ *      hdmi_mode=87
+ *      hdmi_cvt 1024 600 60 6 0 0 0
+ *      hdmi_drive=1
+ * Review the displays manual for settings based on your RPI model and display model.
+ */
+
 int fbglLoadFontList(FBGL *fbgl) {
 
 	if (fbgl == NULL) {
 		return -1;
 	}
 
-	char fontFile[MAX_LINE_LENGTH + 1];
-
-	char *v = getenv("FBGL_PATH");
-
-	if (v == NULL) {
-		printf("env FBGL_PATH not set.\n");
-		return -2;
+	if (fbgl->dbFont != NULL) {
+		free(fbgl->dbFont);
 	}
-
-	sprintf(fontFile, "%s/%s", v, FONT_DB_NAME);
 
 	int fontCnt = 0;
+	char *args[64];
 
-	FILE *f = fopen(fontFile, "r");
-	if (f != NULL) {
-
-		char line[MAX_LINE_LENGTH];
-		while (fgets(line, MAX_LINE_LENGTH, f) != NULL) {
-			trim(line);
-			if (line[0] == '#')
-				continue;
-			if (strlen(line) <= 0)
-				continue;
-			if (fontCnt < MAX_FONT_NUMBER) {
-				fbgl->dbFont[fontCnt++] = strdup(line);
-			}
-		}
-
-		fbgl->dbFontCnt = fontCnt;
-
-		fclose(f);
-	} else {
-		printf("Font file '%s' does not exist.\n", fontFile);
-		return -1;
+	while (_fontPaths[fontCnt] != NULL) {
+		fontCnt++;
 	}
 
-#if(0)
-	for (int i = 0; i < MAX_FONT_NUMBER; i++) {
-		if (fbgl->dbFont[i] != NULL) {
-			printf("Font: %s\n", fbgl->dbFont[i]);
-		}
+	fbgl->dbFont = (FbglFont *)calloc(fontCnt, sizeof(FbglFont));
+	FbglFont *fp = fbgl->dbFont;
+
+	fontCnt = 0;
+
+	while (_fontPaths[fontCnt] != NULL) {
+		char *s = strdup(_fontPaths[fontCnt]);
+		int n = parse(s, "/", args, 64);
+		fp->fontName = strdup(args[n-1]);
+		fp->fontPath = strdup(_fontPaths[fontCnt]);
+		free(s);
+		fontCnt++;
+		fp++;
 	}
-#endif
+
+	fbgl->dbFontCnt = fontCnt;
 
 	return 0;
 }
@@ -76,60 +79,17 @@ int fbglLoadColorList(FBGL *fbgl) {
 		return -1;
 	}
 
-	char colorFile[MAX_LINE_LENGTH + 1];
-
-	char *v = getenv("FBGL_PATH");
-
-	if (v == NULL) {
-		printf("env FBGLIGER_PATH not set.\n");
-		return -2;
+	if (fbgl->dbColor != NULL) {
+		free(fbgl->dbColor);
 	}
-
-	sprintf(colorFile, "%s/%s", v, COLOR_DB_NAME);
 
 	int colorCnt = 0;
-
-	FILE *f = fopen(colorFile, "r");
-	if (f != NULL) {
-		char *args[8];
-
-		char line[MAX_LINE_LENGTH];
-		while (fgets(line, MAX_LINE_LENGTH, f) != NULL) {
-			trim(line);
-			if (line[0] == '#')
-				continue;
-			if (strlen(line) <= 0)
-				continue;
-
-			int n = parse(line, " \t", args, 8);
-
-			if (n != 4)
-				continue;
-
-			if (colorCnt < MAX_COLOR_NUMBER) {
-				Color *c = (Color *)calloc(1, sizeof(Color));
-				strcpy(c->name, args[0]);
-				c->color = (FbglColor)strtol(args[2], NULL, 16);
-				c->used = true;
-				fbgl->dbColor[colorCnt++] = c;
-			}
-		}
-
-		fbgl->dbColorCnt = colorCnt;
-
-		fclose(f);
-	} else {
-		printf("Color file '%s' does not exist.\n", colorFile);
-		return -1;
+	while (_colors[colorCnt].colorName != NULL) {
+		colorCnt++;
 	}
 
-#if(0)
-	for (int i = 0; i < MAX_COLOR_NUMBER; i++) {
-		if (fbgl->dbColor[i] != NULL) {
-			printf("Color: %s=%04x\n", fbgl->dbColor[i]->name, fbgl->dbColor[i]->color);
-		}
-	}
-#endif
+	fbgl->dbColorCnt = colorCnt;
+	fbgl->dbColor = _colors;
 
 	return 0;
 }
@@ -168,6 +128,15 @@ FBGL *fbglInit(char *dev) {
 		return NULL;
 	}
 
+	// if (ioctl(fd, KDSETMODE, KD_GRAPHICS) < 0) {
+        // perror("Failed to set graphics mode.");
+        // close(fd);
+        // return NULL;
+    // }
+
+	// printf("Screen width %d, height %d depth %d\n",
+			// fbgl->vinfo.xres, fbgl->vinfo.yres, fbgl->vinfo.bits_per_pixel);
+
 	fbglLoadColorList(fbgl);
 
 	fbgl->borderWidth = 1;
@@ -180,7 +149,7 @@ FBGL *fbglInit(char *dev) {
 
 	fbglLoadFontList(fbgl);
 
-	fbglClear(fbgl);
+	// fbglClear(fbgl);
 	// printf("1 Temporary directory created: '%s'\n", fbgl->tmpDir);
 
 	return fbgl;
@@ -233,6 +202,9 @@ int fbglMapScreen(FBGL *fbgl) {
 
 		buflen = fbgl->vinfo.yres_virtual * fbgl->finfo.line_length;
 
+		// printf("buflen %ld, yres_virtual %d, line_length %d\n",
+				// buflen, fbgl->vinfo.yres_virtual, fbgl->finfo.line_length);
+
 		fbgl->screen = (char *)mmap(NULL, buflen, PROT_READ|PROT_WRITE, MAP_SHARED, fbgl->fd, 0);
 		fbgl->savedScreen = (char *)calloc(1, buflen);
 		memcpy(fbgl->savedScreen, fbgl->screen, buflen);
@@ -267,7 +239,21 @@ int fbglRestoreScreen(FBGL *fbgl) {
 	return 0;
 }
 
-int fbglPixel(FBGL *fbgl, int x, int y, FbglColor fg) {
+void convert_rgb565_to_rgb888(uint16_t rgb565_pixel, uint8_t *red_8bit, uint8_t *green_8bit, uint8_t *blue_8bit) {
+    // Extract 5-bit Red component
+    uint8_t red_5bit = (rgb565_pixel >> 11) & 0x1F; 
+    // Extract 6-bit Green component
+    uint8_t green_6bit = (rgb565_pixel >> 5) & 0x3F;
+    // Extract 5-bit Blue component
+    uint8_t blue_5bit = rgb565_pixel & 0x1F;
+
+    // Scale to 8-bit values by left-shifting and replicating MSB
+    *red_8bit = (red_5bit << 3) | (red_5bit >> 2); // 5-bit to 8-bit (replicate 3 MSBs)
+    *green_8bit = (green_6bit << 2) | (green_6bit >> 4); // 6-bit to 8-bit (replicate 2 MSBs)
+    *blue_8bit = (blue_5bit << 3) | (blue_5bit >> 2); // 5-bit to 8-bit (replicate 3 MSBs)
+}
+
+int fbglPixel(FBGL *fbgl, int x, int y, FbglColor fg, int alpha) {
 
 	if (fbgl == NULL) {
 		return -1;
@@ -275,7 +261,19 @@ int fbglPixel(FBGL *fbgl, int x, int y, FbglColor fg) {
 
 	if (x >= 0 && x < fbgl->vinfo.xres && y >= 0 && y < fbgl->vinfo.xres) {
 		// Set the pixel color (16-bit RGB565)
-		((FbglColor *)fbgl->screen)[y * (fbgl->finfo.line_length / 2) + x] = fg;
+		if (fbgl->vinfo.bits_per_pixel == 16) {
+			((FbglColor *)fbgl->screen)[y * (fbgl->finfo.line_length / 2) + x] = fg;
+		} else if (fbgl->vinfo.bits_per_pixel == 32) {
+			uint8_t r, g, b;
+			convert_rgb565_to_rgb888(fg, &r, &g, &b);
+			int bpp = fbgl->vinfo.bits_per_pixel / 8;
+			long int location = (x + fbgl->vinfo.xoffset) * bpp + (y + fbgl->vinfo.yoffset) * fbgl->vinfo.xres * bpp;
+			fbgl->screen[location] = b;		// Blue
+			fbgl->screen[location + 1] = g; // Green
+			fbgl->screen[location + 2] = r; // Red
+			fbgl->screen[location + 3] = alpha & 0xff;      // Alpha
+			// ((FbglColor *)fbgl->screen)[y * (fbgl->finfo.line_length / 4) + x] = fg;
+		}
 	} else {
 		return -1;
 	}
@@ -305,11 +303,13 @@ FbglColor fbglFindColor(FBGL *fbgl, char *colorName) {
 		return -2;
 	}
 
+	Color *cp = fbgl->dbColor;
 	for (int i = 0; i < fbgl->dbColorCnt; i++) {
-		if (strcasecmp(fbgl->dbColor[i]->name, colorName) == 0) {
-			return fbgl->dbColor[i]->color;
+		if (strcasecmp(cp->colorName, colorName) == 0) {
+			return cp->colorValue;
 			break;
 		}
+		cp++;
 	}
 
 	return 0;
@@ -326,65 +326,57 @@ char *fbglFindFont(FBGL *fbgl, char *fontName) {
 		return NULL;
 	}
 
+	FbglFont *fp = fbgl->dbFont;
 	for (int i = 0; i < fbgl->dbFontCnt; i++) {
-		if (strstr(fbgl->dbFont[i], fontName) != NULL)
-			return fbgl->dbFont[i];
+		// printf("%s, %s\n", fbgl->dbFont[i].fontName, fontName);
+		if (strcmp(fp->fontName, fontName) == 0)
+			return fp->fontPath;
+		fp++;
 	}
 
 	return NULL;
 }
 
-int fbglLoadFont(FBGL *fbgl, FbglFont *fbglFont, FT_Face face) {
+int fbglLoadFont(FBGL *fbgl, FbglWidget *gw) {
 
-	char *ff = fbglFindFont(fbgl, fbglFont->fontName);
+	char *ff = fbglFindFont(fbgl, gw->fontName);
 	if (ff == NULL) {
 		// font not found.
+		return -1;
+	}
+
+	FT_Error err = FT_New_Face(fbgl->library, ff, 0, &gw->fontFace);
+	if ( err == FT_Err_Unknown_File_Format ) {
+		printf("Here 2.\n");
+		return -2;
+	} else if ( err ) {
+		printf("Here 3.\n");
 		return -3;
 	}
 
-	if (face == NULL) {
-		return -4;
-	}
-
-	FT_Error err = FT_New_Face(fbgl->library, ff, 0, &face);
-	if ( err == FT_Err_Unknown_File_Format ) {
-		return -1;
-	} else if ( err ) {
-		return -2;
-	}
-
-	FT_Set_Pixel_Sizes(face, 0, fbglFont->fontSize);
+	FT_Set_Pixel_Sizes(gw->fontFace, 0, gw->fontSize);
 
 	return 0;
 }
 
-FbglFont *fbglNewFbglFont(char *fontName, int fontSize) {
-	static FbglFont font;
-
-	strcpy(font.fontName, fontName);
-	font.fontSize = fontSize;
-
-	return &font;
-}
-
-FbglColor fbglGetColor(FBGL *fbgl, char *name) {
+FbglColor fbglGetColor(FBGL *fbgl, char *colorName) {
     unsigned short color = 0;
 
 	bool flag = false;
+	Color *cp = fbgl->dbColor;;
 	for (int i = 0; i < MAX_COLOR_NUMBER; i++) {
-		if (fbgl->dbColor[i] != NULL) {
-			if (fbgl->dbColor[i]->used == true) {
-				if(strcasecmp(name, fbgl->dbColor[i]->name) == 0) {
-					color = fbgl->dbColor[i]->color;
-					flag = true;
-					break;
-				}
+		if (cp != NULL) {
+			if(strcasecmp(colorName, cp->colorName) == 0) {
+				color = cp->colorValue;
+				flag = true;
+				break;
 			}
 		}
+		cp++;
 	}
 
 	if (flag == false) {
-		printf("Color '%s' not found.\n", name);
+		printf("Color '%s' not found.\n", colorName);
 	}
 
     return color;

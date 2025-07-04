@@ -7,8 +7,8 @@ CC=gcc
 SRCS=$(wildcard *.c)
 OBJS=$(SRCS:.c=.o)
 
-LDFLAGS=-L/usr/local/lib -L../utils/libs -lstrutils -lfreetype -lrt -lpthread
-CFLAGS=-std=gnu99 -g -Wall -I../utils/incs -I/usr/local/include -I/usr/include/freetype2
+LDFLAGS=-L/usr/local/lib -L../utils/libs -lstrutils -lfreetype -lpng -lrt -lpthread
+CFLAGS=-std=gnu99 -g -Wall -I../utils/incs -I/usr/include -I/usr/include/libxml2 -I/usr/local/include -I/usr/include/freetype2
 ifeq ($(PROFILE),yes)
 	CFLAGS += -pg
 	LDFLAGS += -pg
@@ -21,7 +21,7 @@ all: $(ARC)
 $(ARC): $(OBJS)
 	$(AR) -r $(ARC) $(OBJS)
 
-$(OBJS): fbgl.h
+$(OBJS): fbgl.h fbglDraw.h
 
 .c.o:
 	$(CC) $(CFLAGS) -c $< -o $@

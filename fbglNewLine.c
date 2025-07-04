@@ -23,7 +23,7 @@ FbglWidget *fbglNewLine(FBGL *fbgl, char *name, int x, int y, int x2, int y2, ch
 	if (style != NULL)
 		gw->style = strdup(style);
 	else
-		gw->style = strdup("font=FreeSerif.tff,size=32,fg=white,bg=black");
+		gw->style = strdup("fg=white,bg=black");
 	gw->x1 = x;
 	gw->y1 = y;
 	gw->x2 = x;
@@ -37,11 +37,7 @@ FbglWidget *fbglNewLine(FBGL *fbgl, char *name, int x, int y, int x2, int y2, ch
 
 	for (int i = 0; i < n; i++) {
 		// printf("args[%d] = %s\n", i, args[i]);
-		if (strncasecmp(args[i], "font=", 5) == 0) {
-			gw->fontName = strdup(&args[i][5]);
-		} else if (strncasecmp(args[i], "size=", 5) == 0) {
-			gw->fontSize = atoi(&args[i][5]);
-		} else if (strncasecmp(args[i], "fg=", 3) == 0) {
+		if (strncasecmp(args[i], "fg=", 3) == 0) {
 			gw->fg = fbglGetColor(fbgl, &args[i][3]);
 		} else if (strncasecmp(args[i], "bg=", 3) == 0) {
 			gw->bg = fbglGetColor(fbgl, &args[i][3]);

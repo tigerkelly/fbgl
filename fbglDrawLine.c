@@ -26,7 +26,7 @@ int fbglDrawLine(FBGL *fbgl, FbglWidget *gw) {
 
 		for (int b = 0; b < fbgl->borderWidth; b++) {
 			for (int i = 0; i < len; i++) {
-				fbglPixel(fbgl, x1 + i, y1 + b, gw->fg);
+				fbglPixel(fbgl, x1 + i, y1 + b, gw->fg, 0);
 			}
 		}
 	} else {
@@ -34,7 +34,7 @@ int fbglDrawLine(FBGL *fbgl, FbglWidget *gw) {
 
 		for (int b = 0; b < fbgl->borderWidth; b++) {
 			for (int i = 0; i < len; i++) {
-				fbglPixel(fbgl, x1 + b, y1 + i, gw->fg);
+				fbglPixel(fbgl, x1 + b, y1 + i, gw->fg, 0);
 			}
 		}
 	}

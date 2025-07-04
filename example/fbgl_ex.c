@@ -33,32 +33,30 @@ int main(int argc, char *argv[]) {
 
 		sleep(1);
 
-		char *style = "fg=aqua,bg=black";
+		char *style = "fg=blue,bg=black";
 		FbglPanel *panel = fbglNewPanel(fbgl, "panel", 0, 0, 0, 0, style);
 
-		style = "font=FreeSerif.ttf,size=96,fg=aqua,bg=black";
-		FbglWidget *lbl = fbglNewText(fbgl, "lbl1", "Label text goes here.", 100, 100, style);
+		style = "fn=FreeSerif.ttf,fs=64,fg=green,bg=black";
+		FbglWidget *lbl = fbglNewLabel(fbgl, "lbl1", "Text goes here.", 600, 100, style);
 		fbglWidgetAdd(panel, lbl);
 
-		style = "bc=blue,fc=fuchsia,fg=blue,bg=white";
-		FbglWidget *circle1 = fbglNewCircle(fbgl, "txt1", 160, 500, 150, style);
-		fbglWidgetAdd(panel, circle1);
-
-		style = "bc=yellow,fc=fuchsia,fg=blue,bg=white,filled=true";
-		FbglWidget *circle2 = fbglNewCircle(fbgl, "txt1", 500, 500, 150, style);
+		style = "bc=red,fc=yellow,fg=white,bg=black,filled=true";
+		FbglWidget *circle2 = fbglNewCircle(fbgl, "txt1", 300, 300, (300 - (fbgl->borderWidth *2)), style);
 		fbglWidgetAdd(panel, circle2);
 
-		style = "font=FreeSerif.ttf,size=64,fg=blue,bg=white";
-		FbglWidget *box = fbglNewBox(fbgl, "box1", 100, 150, 200, 150, style);
-		fbglWidgetAdd(panel, box);
+		style = "bc=red,fc=lightgreen,fg=white,bg=black,filled=true";
+		FbglWidget *box1 = fbglNewBox(fbgl, "box1", 600, 300, 100, 100, style);
+		fbglWidgetAdd(panel, box1);
 
-		style = "font=FreeSerif.ttf,size=64,fc=cornsilk,fg=red,bg=white,filled=true";
-		FbglWidget *box2 = fbglNewBox(fbgl, "box2", 325, 150, 200, 150, style);
-		fbglWidgetAdd(panel, box2);
+		style = "bc=red,bw=3";
+		FbglWidget *img1 = fbglNewImage(fbgl, "img1", "logo.png", 800, 300, style);
+		fbglWidgetAdd(panel, img1);
+
+		// fbglPrintPanel(fbgl, panel);
 
 		fbglDrawPanel(fbgl, panel);
 
-		sleep(15);
+		sleep(10);
 
 		fbglExit(fbgl);
 	}

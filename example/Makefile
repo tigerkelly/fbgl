@@ -1,10 +1,10 @@
 
 CC=gcc
 DEPS = glt.h
-CFLAGS=-I. -I../ -I../../utils/incs -I/usr/include/freetype2
+CFLAGS=-I. -I../ -I../../utils/incs -I/usr/include/freetype2 -I/usr/include/libxml2
 LDFLAGS=-L. -L../ -L../../utils/libs
 
-LIBS=-lfbgl -lfreetype -lini -lstrutils
+LIBS=-lfbgl -lpng -lfreetype -lini -lstrutils -lxml2
 
 PRG=fbgl_ex
 

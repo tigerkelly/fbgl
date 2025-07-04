@@ -24,7 +24,7 @@ FbglWidget *fbglNewCircle(FBGL *fbgl, char *name, int x, int y, int radius, char
 	if (style != NULL)
 		gw->style = strdup(style);
 	else
-		gw->style = strdup("font=FreeSerif.tff,size=32,fg=white,bg=black");
+		gw->style = strdup("fg=white,bg=black");
 
 	gw->x1 = x;
 	gw->y1 = y;

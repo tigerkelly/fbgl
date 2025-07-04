@@ -18,11 +18,13 @@ int fbglDrawPanel(FBGL *fbgl, FbglPanel *panel) {
 		return -2;
 	}
 
+	fbglClear(fbgl);
+
 	_fbglBox(fbgl, panel->x, panel->y, panel->w, panel->h, panel->fg, panel->bg);
 
 	for (int i = 0; i < MAX_WIDGET_COUNT; i++) {
 		if (panel->gw[i] != NULL) {
-			// printf("Widget: %s %04x %04x\n", panel->gw[i]->name, panel->gw[i]->fg, panel->gw[i]->bg);
+			// fbglLogIt("Widget: %s %04x %04x\n", panel->gw[i]->name, panel->gw[i]->fg, panel->gw[i]->bg);
 
 			FbglWidget *gw = panel->gw[i];
 
@@ -30,13 +32,16 @@ int fbglDrawPanel(FBGL *fbgl, FbglPanel *panel) {
 
 			switch (gw->wType) {
 				case WIDGET_LABEL:
-					fbglDrawText(fbgl, gw);
+					fbglDrawLabel(fbgl, gw);
 					break;
 				case WIDGET_CIRCLE:
 					fbglDrawCircle(fbgl, gw);
 					break;
 				case WIDGET_BOX:
 					fbglDrawBox(fbgl, gw);
+					break;
+				case WIDGET_IMAGE:
+					fbglDrawImage(fbgl, gw);
 					break;
 				case WIDGET_UNKNOWN:
 					break;

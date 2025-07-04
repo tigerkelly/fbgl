@@ -2,36 +2,40 @@
 // Style is an ascii string with no whitespace(s) before or after '='.
 
 Box styles.
-   fg = Text foreground color.
-   bg = Text background color.
-   filled = true/false, true=box filled with fg.
+	fg = Text foreground color.
+	bg = Text background color.
+	filled = true/false, true=box filled with fg.
 
 Line styles.
-   fg = Text foreground color.
-   bg = Text background color.
+	fg = Text foreground color.
+	bg = Text background color.
 
 Label styles.
-   font = Font name, ie "FreeSerif.ttf"
-   size = Font size, ie 96
-   fg = Text foreground color.
-   bg = Text background color.
+	fn = Font name, ie "FreeSerif.ttf"
+	fs = Font size, ie 96
+	fg = Text foreground color.
+	bg = Text background color.
 
 Text styles.
-   font = Font name, ie "FreeSerif.ttf"
-   size = Font size, ie 96
-   fg = Text foreground color.
-   bg = Text background color.
+	fn= Font name, ie "FreeSerif.ttf"
+	fs = Font size, ie 96
+	fg = Text foreground color.
+	bg = Text background color.
 
 TextField styles.
-   font = Font name, ie "FreeSerif.ttf"
-   size = Font size, ie 96
-   fg = Text foreground color.
-   bg = Text background color.
-   bWidth = borderwidth in pixels
-   prompt = Text prompt
-   readOnly = true/false
+	fn= Font name, ie "FreeSerif.ttf"
+	fs = Font size, ie 96
+	fg = Text foreground color.
+	bg = Text background color.
+	bWidth = borderwidth in pixels
+	prompt = Text prompt
+	readOnly = true/false
 
 Circle styles.
-   fg = Text foreground color.
-   bg = Text background color.
-   filled = true/false, true=box filled with fg.
+	fg = Text foreground color.
+	bg = Text background color.
+	filled = true/false, true=box filled with fg.
+
+Image styles.
+	bc = Border color.
+	bw = Broder width.

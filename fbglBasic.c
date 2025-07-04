@@ -20,7 +20,7 @@ int _fbglHLine(FBGL *fbgl, int x, int y, int x2, int y2, FbglColor fg, FbglColor
 
     for (int b = 0; b < fbgl->borderWidth; b++) {
         for (int i = 0; i < len; i++) {
-            fbglPixel(fbgl, x + i, y + b, fg);
+            fbglPixel(fbgl, x + i, y + b, fg, 0);
         }
     }
 
@@ -37,7 +37,7 @@ int _fbglVLine(FBGL *fbgl, int x, int y, int x2, int y2, FbglColor fg, FbglColor
 
     for (int b = 0; b < fbgl->borderWidth; b++) {
         for (int i = 0; i < len; i++) {
-            fbglPixel(fbgl, x + b, y + i, fg);
+            fbglPixel(fbgl, x + b, y + i, fg, 0);
         }
     }
 
@@ -53,22 +53,22 @@ int _fbglBox(FBGL *fbgl, int x, int y, int w, int h, FbglColor fg, FbglColor bg)
     for (int b = 0; b < fbgl->borderWidth; b++) {
         // Draw top line.
         for (int i = 0; i < w; i++) {
-            fbglPixel(fbgl, x + i, y, fg);
+            fbglPixel(fbgl, x + i, y, fg, 0);
         }
 
         // Draw left line.
         for (int i = 0; i < h; i++) {
-            fbglPixel(fbgl, x, y + i, fg);
+            fbglPixel(fbgl, x, y + i, fg, 0);
         }
 
         // Draw right line.
         for (int i = 0; i < h; i++) {
-            fbglPixel(fbgl, x + w, y + i, fg);
+            fbglPixel(fbgl, x + w, y + i, fg, 0);
         }
 
         // Draw bottom line.
         for (int i = 0; i < w; i++) {
-            fbglPixel(fbgl, x + i, y + h, fg);
+            fbglPixel(fbgl, x + i, y + h, fg, 0);
         }
 
         x++;
@@ -88,7 +88,7 @@ int _fbglFilledBox(FBGL *fbgl, int x1, int y1, int w, int h, FbglColor fg, FbglC
 
     for (int y = y1; y < y1 + h; y++) {
         for (int x = x1; x < x1 + w; x++) {
-            fbglPixel(fbgl, x, y, fg);
+            fbglPixel(fbgl, x, y, fg, 0);
         }
     }
 
@@ -106,14 +106,14 @@ int _fbglCircle(FBGL *fbgl, int x0, int y0, int radius, FbglColor fg, FbglColor 
     int err = 0;
 
     while (x >= y) {
-        fbglPixel(fbgl, x0 + x, y0 + y, fg);
-        fbglPixel(fbgl, x0 + y, y0 + x, fg);
-        fbglPixel(fbgl, x0 - y, y0 + x, fg);
-        fbglPixel(fbgl, x0 - x, y0 + y, fg);
-        fbglPixel(fbgl, x0 - x, y0 - y, fg);
-        fbglPixel(fbgl, x0 - y, y0 - x, fg);
-        fbglPixel(fbgl, x0 + y, y0 - x, fg);
-        fbglPixel(fbgl, x0 + x, y0 - y, fg);
+        fbglPixel(fbgl, x0 + x, y0 + y, fg, 0);
+        fbglPixel(fbgl, x0 + y, y0 + x, fg, 0);
+        fbglPixel(fbgl, x0 - y, y0 + x, fg, 0);
+        fbglPixel(fbgl, x0 - x, y0 + y, fg, 0);
+        fbglPixel(fbgl, x0 - x, y0 - y, fg, 0);
+        fbglPixel(fbgl, x0 - y, y0 - x, fg, 0);
+        fbglPixel(fbgl, x0 + y, y0 - x, fg, 0);
+        fbglPixel(fbgl, x0 + x, y0 - y, fg, 0);
 
         if (err <= 0) {
             y += 1;
@@ -137,7 +137,7 @@ int _fbglFilledCircle(FBGL *fbgl, int x0, int y0, int radius, FbglColor fg, Fbgl
     for (int y = -radius; y <= radius; y++) {
         for (int x = -radius; x <= radius; x++) {
             if (x * x + y * y <= radius * radius) {
-                fbglPixel(fbgl, x0 + x, y0 + y, fg);
+                fbglPixel(fbgl, x0 + x, y0 + y, fg, 0);
             }
         }
     }
@@ -205,9 +205,9 @@ int _fbglText(FBGL *fbgl, int x, int y, char *text, char *fontName, int fontSize
                 int y_off = bbox_ymax - face->glyph->metrics.horiBearingY / 64;
 
                 if (pixel_value > 128) {
-                    fbglPixel(fbgl, x + x2, y + y2 + y_off, (fg <= 0)? fbgl->dfg : fg);
+                    fbglPixel(fbgl, x + x2, y + y2 + y_off, (fg <= 0)? fbgl->dfg : fg, 0);
                 } else {
-                    fbglPixel(fbgl, x + x2, y + y2 + y_off, (bg <= 0)? fbgl->dbg : bg);
+                    fbglPixel(fbgl, x + x2, y + y2 + y_off, (bg <= 0)? fbgl->dbg : bg, 0);
                 }
             }
         }
