@@ -16,7 +16,7 @@
 
 #define MAX_WIDGET_COUNT	256
 
-#define DEFAULT_FONTNAME	"FreeSerif.tff"
+#define DEFAULT_FONTNAME	"FreeSerif"
 #define DEFAULT_FONTSIZE	32
 #define MAX_FONT_SIZE		200
 #define MAX_COLOR_NAME		32

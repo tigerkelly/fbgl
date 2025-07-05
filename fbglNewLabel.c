@@ -37,13 +37,13 @@ FbglWidget *fbglNewLabel(FBGL *fbgl, char *name, char *text, int x, int y, char 
 
 	for (int i = 0; i < n; i++) {
 		// printf("args[%d] = %s\n", i, args[i]);
-		if (strncasecmp(args[i], "fn=", 3) == 0) {
+		if (strncasecmp(args[i], "fn=", 3) == 0) {			// font name
 			gw->fontName = strdup(&args[i][3]);
-		} else if (strncasecmp(args[i], "fs=", 3) == 0) {
+		} else if (strncasecmp(args[i], "fs=", 3) == 0) {	// font size
 			gw->fontSize = atoi(&args[i][3]);
-		} else if (strncasecmp(args[i], "fg=", 3) == 0) {
+		} else if (strncasecmp(args[i], "fg=", 3) == 0) {	// foreground color
 			gw->fg = fbglGetColor(fbgl, &args[i][3]);
-		} else if (strncasecmp(args[i], "bg=", 3) == 0) {
+		} else if (strncasecmp(args[i], "bg=", 3) == 0) {	// background color
 			gw->bg = fbglGetColor(fbgl, &args[i][3]);
 		}
 	}
@@ -56,6 +56,9 @@ FbglWidget *fbglNewLabel(FBGL *fbgl, char *name, char *text, int x, int y, char 
 	if (gw->fontName != NULL) {
 		fbglLoadFont(fbgl, gw);
 		// printf("gw->fontface %p\n", gw->fontFace);
+	} else {
+		gw->fontName = strdup(fbgl->dfn);
+		fbglLoadFont(fbgl, gw);
 	}
 
 	if (gw->fg <= 0)

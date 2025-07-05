@@ -61,6 +61,10 @@ int fbglLoadFontList(FBGL *fbgl) {
 	while (_fontPaths[fontCnt] != NULL) {
 		char *s = strdup(_fontPaths[fontCnt]);
 		int n = parse(s, "/", args, 64);
+		char *p = strrchr(args[n-1], '.');
+		if (p != NULL) {
+			*p = '\0';
+		}
 		fp->fontName = strdup(args[n-1]);
 		fp->fontPath = strdup(_fontPaths[fontCnt]);
 		free(s);

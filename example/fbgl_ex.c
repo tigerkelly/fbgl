@@ -36,9 +36,14 @@ int main(int argc, char *argv[]) {
 		char *style = "fg=blue,bg=black";
 		FbglPanel *panel = fbglNewPanel(fbgl, "panel", 0, 0, 0, 0, style);
 
-		style = "fn=FreeSerif.ttf,fs=64,fg=green,bg=black";
-		FbglWidget *lbl = fbglNewLabel(fbgl, "lbl1", "Text goes here.", 600, 100, style);
-		fbglWidgetAdd(panel, lbl);
+		style = "fn=FreeSanBold,fs=64,fg=green,bg=black";
+		FbglWidget *lbl1 = fbglNewLabel(fbgl, "lbl1", "Text goes here.", 600, 100, style);
+		fbglWidgetAdd(panel, lbl1);
+
+		// Use default font and size.
+		style = "fg=green,bg=black";
+		FbglWidget *lbl2 = fbglNewLabel(fbgl, "lbl2", "Default font.", 600, 150, style);
+		fbglWidgetAdd(panel, lbl2);
 
 		style = "bc=red,fc=yellow,fg=white,bg=black,filled=true";
 		FbglWidget *circle2 = fbglNewCircle(fbgl, "txt1", 300, 300, (300 - (fbgl->borderWidth *2)), style);
