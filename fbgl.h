@@ -28,6 +28,7 @@ typedef unsigned short FbglColor;
 
 typedef enum {
 	WIDGET_LABEL = 1,
+	WIDGET_LINE,
 	WIDGET_BOX,
 	WIDGET_CIRCLE,
 	WIDGET_IMAGE,
@@ -53,6 +54,7 @@ typedef struct _fbglwidget {
 	int y2;
 	int w;
 	int h;
+	int lineWidth;		// thickness of line.
 	int radius;
 	int fontSize;
 	int borderWidth;
@@ -158,8 +160,6 @@ int fbglDrawPanel(FBGL *fbgl, FbglPanel *panel);
 FbglColor fbglGetColor(FBGL *fbgl, char *color);
 
 int fbglWidgetAdd(FbglPanel *panel, void *widget);
-
-int fbglLoadXml(char *xmlFile);
 
 FBGL *fbglInit(char *dev);
 int fbglRestoreScreen(FBGL *fbgl);

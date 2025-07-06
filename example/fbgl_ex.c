@@ -54,8 +54,16 @@ int main(int argc, char *argv[]) {
 		fbglWidgetAdd(panel, box1);
 
 		style = "bc=red,bw=3";
-		FbglWidget *img1 = fbglNewImage(fbgl, "img1", "logo.png", 800, 300, style);
+		FbglWidget *img1 = fbglNewImage(fbgl, "img1", "logo.png", 800, 250, style);
 		fbglWidgetAdd(panel, img1);
+
+		style = "lw=8,fg=red,bg=black,vert=false";	// horizontal line
+		FbglWidget *hline1 = fbglNewLine(fbgl, "hline1", 750, 450, 950, 450, style);
+		fbglWidgetAdd(panel, hline1);
+
+		style = "lw=8,fg=red,bg=black,vert=true";	// vertical line
+		FbglWidget *vline1 = fbglNewLine(fbgl, "vline1", 750, 455, 475, 555, style);
+		fbglWidgetAdd(panel, vline1);
 
 		// fbglPrintPanel(fbgl, panel);
 
