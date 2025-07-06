@@ -19,17 +19,23 @@ The example directory contains a simple example.
 
 Using the fbset command check to see what the color bits are.
 The monitor I am using shows as 
+<code>
 	mode "1024x600"
 		geometry 1024 600 1024 600 32
 		timings 0 0 0 0 0 0 0
 		rgba 8/16,8/8,8/0,8/24
 	endmode
+</code>
 
 The geometry line contains the bits per pixel (32).
 If it does not say 32 bits then use the fbset command like.
+<code>
 	fbset -g 1024 600 1024 600 32
+</code>
 
 If this does not set the bits per pixel to 32 then you maybe need to remove or comment out the 
+<code>
 	dtoverlay=vc4-kms-v3d
+</code>
 
 In the /boot/firmware/config.txt file. Reboot and try fbset -g command again.
