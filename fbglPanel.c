@@ -35,6 +35,9 @@ int fbglDrawPanel(FBGL *fbgl, FbglPanel *panel) {
 				case WIDGET_LABEL:
 					fbglDrawLabel(fbgl, gw);
 					break;
+				case WIDGET_ARC:
+					fbglDrawArc(fbgl, gw);
+					break;
 				case WIDGET_LINE:
 					fbglDrawLine(fbgl, gw);
 					break;

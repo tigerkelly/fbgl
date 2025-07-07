@@ -28,6 +28,7 @@ typedef unsigned short FbglColor;
 
 typedef enum {
 	WIDGET_LABEL = 1,
+	WIDGET_ARC,
 	WIDGET_LINE,
 	WIDGET_BOX,
 	WIDGET_CIRCLE,
@@ -58,6 +59,8 @@ typedef struct _fbglwidget {
 	int radius;
 	int fontSize;
 	int borderWidth;
+	double sa;				// start angle for arc
+	double ea;				// end angle for arc
 	BasicWidgetType wType;
 	FT_Face fontFace;
 	FbglColor fg;
@@ -192,5 +195,6 @@ FbglWidget *fbglNewBox(FBGL *fbgl, char *name, int x, int y, int x2, int y2, cha
 FbglWidget *fbglNewLine(FBGL *fbgl, char *name, int x, int y, int x2, int y2, char *style);
 FbglWidget *fbglNewCircle(FBGL *fbgl, char *name, int x, int y, int radius, char *style);
 FbglWidget *fbglNewImage(FBGL *fbgl, char *name, char *imgFile, int x, int y, char *style);
+FbglWidget *fbglNewArc(FBGL *fbgl, char *name, int x, int y, int radius, char *style);
 
 #endif

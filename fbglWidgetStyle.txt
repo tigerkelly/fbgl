@@ -39,3 +39,10 @@ Circle styles.
 Image styles.
 	bc = Border color.
 	bw = Broder width.
+
+Arc styles.
+	fg = Text foreground color.
+	bg = Text background color.
+	sa = start angle.
+	ea = end angle.		// must be larger than the start angle.
+	lw = line width.

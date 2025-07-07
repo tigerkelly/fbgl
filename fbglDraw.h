@@ -10,5 +10,6 @@ int fbglDrawCircle(FBGL *fbgl, FbglWidget *gw);
 int fbglDrawFilledCircle(FBGL *fbgl, FbglWidget *gw);
 int fbglDrawImage(FBGL *fbgl, FbglWidget *gw);
 int fbglDrawLine(FBGL *fbgl, FbglWidget *gw);
+int fbglDrawArc(FBGL *fbgl, FbglWidget *gw);
 
 #endif

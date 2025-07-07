@@ -4,7 +4,7 @@ DEPS = glt.h
 CFLAGS=-I. -I../ -I../../utils/incs -I/usr/include/freetype2 -I/usr/include/libxml2
 LDFLAGS=-L. -L../ -L../../utils/libs
 
-LIBS=-lfbgl -lpng -lfreetype -lini -lstrutils -lxml2
+LIBS=-lfbgl -lpng -lfreetype -lini -lstrutils -lm
 
 PRG=fbgl_ex
 

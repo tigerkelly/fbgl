@@ -62,8 +62,12 @@ int main(int argc, char *argv[]) {
 		fbglWidgetAdd(panel, hline1);
 
 		style = "lw=8,fg=red,bg=black,vert=true";	// vertical line
-		FbglWidget *vline1 = fbglNewLine(fbgl, "vline1", 750, 455, 475, 555, style);
+		FbglWidget *vline1 = fbglNewLine(fbgl, "vline1", 700, 455, 475, 555, style);
 		fbglWidgetAdd(panel, vline1);
+
+		style = "lw=8,fg=red,bg=black,sa=90.0,ea=150.0";	// vertical line
+		FbglWidget *arc1 = fbglNewArc(fbgl, "arc1", 900, 460, 100, style);
+		fbglWidgetAdd(panel, arc1);
 
 		// fbglPrintPanel(fbgl, panel);
 

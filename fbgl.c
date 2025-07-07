@@ -263,6 +263,10 @@ int fbglPixel(FBGL *fbgl, int x, int y, FbglColor fg, int alpha) {
 		return -1;
 	}
 
+	if (x < 0 || x >= fbgl->vinfo.xres || y < 0 || y >= fbgl->vinfo.yres) {
+        return -2; // Out of bounds
+    }
+
 	if (x >= 0 && x < fbgl->vinfo.xres && y >= 0 && y < fbgl->vinfo.xres) {
 		// Set the pixel color (16-bit RGB565)
 		if (fbgl->vinfo.bits_per_pixel == 16) {
@@ -271,7 +275,8 @@ int fbglPixel(FBGL *fbgl, int x, int y, FbglColor fg, int alpha) {
 			uint8_t r, g, b;
 			convert_rgb565_to_rgb888(fg, &r, &g, &b);
 			int bpp = fbgl->vinfo.bits_per_pixel / 8;
-			long int location = (x + fbgl->vinfo.xoffset) * bpp + (y + fbgl->vinfo.yoffset) * fbgl->vinfo.xres * bpp;
+			// long location = (x + fbgl->vinfo.xoffset) * bpp + (y + fbgl->vinfo.yoffset) * fbgl->vinfo.xres * bpp;
+			long location = (x + fbgl->vinfo.xoffset) * bpp + (y + fbgl->vinfo.yoffset) * fbgl->finfo.line_length;
 			fbgl->screen[location] = b;		// Blue
 			fbgl->screen[location + 1] = g; // Green
 			fbgl->screen[location + 2] = r; // Red
@@ -279,7 +284,8 @@ int fbglPixel(FBGL *fbgl, int x, int y, FbglColor fg, int alpha) {
 			// ((FbglColor *)fbgl->screen)[y * (fbgl->finfo.line_length / 4) + x] = fg;
 		}
 	} else {
-		return -1;
+		// return out of bounds.
+		return -3;
 	}
 
 	return 0;
