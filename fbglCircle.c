@@ -72,6 +72,8 @@ FbglWidget *fbglNewCircle(FBGL *fbgl, char *name, int x, int y, int radius, char
 			gw->fc = fbglGetColor(fbgl, &args[i][3]);
 		} else if (strncasecmp(args[i], "bc=", 3) == 0) {
 			gw->bc = fbglGetColor(fbgl, &args[i][3]);
+		} else if (strncasecmp(args[i], "bw=", 3) == 0) {
+			gw->borderWidth = atoi(&args[i][3]);
 		} else if (strncasecmp(args[i], "filled=", 7) == 0) {
 			if (strcasecmp(&args[i][7], "true") == 0)
 				gw->filled = true;

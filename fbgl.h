@@ -53,6 +53,8 @@ typedef struct _fbglwidget {
 	int y1;
 	int x2;
 	int y2;
+	int rx;
+	int ry;
 	int w;
 	int h;
 	int lineWidth;		// thickness of line.

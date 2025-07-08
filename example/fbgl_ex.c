@@ -17,6 +17,7 @@ void signalHandler(int signum);
 
 int main(int argc, char *argv[]) {
 
+	// Handle signals to quit gracefully.
 	struct sigaction sa;
 	sa.sa_handler = signalHandler;
 	sigemptyset(&sa.sa_mask);
@@ -27,12 +28,15 @@ int main(int argc, char *argv[]) {
 		return 1;
 	}
 
+	// the fbglInit() must be called first.
 	fbgl = fbglInit("/dev/fb0");
 	if (fbgl != NULL) {
+		// Set the default border width.
 		fbglSetBorderWidth(fbgl, 4);
 
 		sleep(1);
 
+		// Create a panel to place widget into.
 		char *style = "fg=blue,bg=black";
 		FbglPanel *panel = fbglNewPanel(fbgl, "panel", 0, 0, 0, 0, style);
 
@@ -71,6 +75,7 @@ int main(int argc, char *argv[]) {
 
 		// fbglPrintPanel(fbgl, panel);
 
+		// Drawing the panel also draws any widgets that are on the panel.
 		fbglDrawPanel(fbgl, panel);
 
 		sleep(10);
